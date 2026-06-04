@@ -1,0 +1,6 @@
+{
+  "name": "EduFlow",
+  "description": "نظام إدارة تعليمي يركز على متابعة أداء الطلاب والتحليلات.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

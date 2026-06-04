@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-headline: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --color-page-bg: var(--theme-page-bg);
+  --color-page-text: var(--theme-page-text);
+  
+  --color-surface-base: var(--theme-surface);
+  --color-surface-hover: var(--theme-surface-hover);
+  --color-surface-active: var(--theme-surface-active);
+  
+  --color-border-subtle: var(--theme-border);
+  
+  --color-text-muted: var(--theme-text-muted);
+  --color-text-light: var(--theme-text-light);
+  
+  --color-primary-base: var(--theme-primary);
+  --color-primary-bg: var(--theme-primary-bg);
+  --color-primary-hover: var(--theme-primary-hover);
+  
+  --color-success-base: var(--theme-success);
+  --color-success-bg: var(--theme-success-bg);
+  
+  --color-danger-base: var(--theme-danger);
+  --color-danger-bg: var(--theme-danger-bg);
+
+  --shadow-glass: var(--theme-shadow-glass);
+  --shadow-glass-hover: var(--theme-shadow-glass-hover);
+}
+
+@layer base {
+  :root {
+    --theme-page-bg: #f9f9ff;
+    --theme-page-text: #111c2d;
+    
+    --theme-surface: #ffffff;
+    --theme-surface-hover: #f0f3ff;
+    --theme-surface-active: #e7eeff;
+    
+    --theme-border: rgba(0, 0, 0, 0.1);
+    
+    --theme-text-muted: #464555;
+    --theme-text-light: #777587;
+    
+    --theme-primary: #3525cd;
+    --theme-primary-bg: rgba(53, 37, 205, 0.1);
+    --theme-primary-hover: rgba(53, 37, 205, 0.15);
+    
+    --theme-success: #006e4b;
+    --theme-success-bg: rgba(0, 110, 75, 0.1);
+    
+    --theme-danger: #ba1a1a;
+    --theme-danger-bg: rgba(186, 26, 26, 0.1);
+    
+    --theme-shadow-glass: 0 4px 12px rgba(53, 37, 205, 0.05);
+    --theme-shadow-glass-hover: 0 12px 24px rgba(53, 37, 205, 0.1);
+    --theme-shadow-primary-glow: 0 0 15px rgba(53, 37, 205, 0.3);
+  }
+
+  .dark {
+    --theme-page-bg: #05060a;
+    --theme-page-text: #ffffff;
+    
+    --theme-surface: rgba(255, 255, 255, 0.05);
+    --theme-surface-hover: rgba(255, 255, 255, 0.1);
+    --theme-surface-active: rgba(255, 255, 255, 0.15);
+    
+    --theme-border: rgba(255, 255, 255, 0.1);
+    
+    --theme-text-muted: rgba(255, 255, 255, 0.7);
+    --theme-text-light: rgba(255, 255, 255, 0.4);
+    
+    --theme-primary: #22d3ee;
+    --theme-primary-bg: rgba(34, 211, 238, 0.1);
+    --theme-primary-hover: rgba(34, 211, 238, 0.2);
+    
+    --theme-success: #4ade80;
+    --theme-success-bg: rgba(74, 222, 128, 0.1);
+    
+    --theme-danger: #f87171;
+    --theme-danger-bg: rgba(239, 68, 68, 0.1);
+    
+    --theme-shadow-glass: inset 0 0 20px rgba(255, 255, 255, 0.02);
+    --theme-shadow-glass-hover: 0 0 20px rgba(34, 211, 238, 0.15);
+    --theme-shadow-primary-glow: 0 0 15px rgba(34, 211, 238, 0.5);
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-page-bg);
+  color: var(--color-page-text);
+  overflow-x: hidden;
+}
+
+.font-headline {
+  font-family: var(--font-headline);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
