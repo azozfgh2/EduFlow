@@ -1,22 +1,33 @@
 import React, { useState } from 'react';
-import { Search, Calendar, Users, ClipboardList, MessageSquare, Bell } from 'lucide-react';
+import { Search, Calendar, Users, ClipboardList, MessageSquare, Bell, LogOut, Trash2, Settings, Video } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import { useAuth } from '../lib/AuthContext';
+import { auth, db } from '../lib/firebase';
+import { signOut } from 'firebase/auth';
 
 interface LayoutProps {
   children: React.ReactNode;
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  userProfile?: any;
 }
 
-export function Layout({ children, activeTab, setActiveTab }: LayoutProps) {
+export function Layout({ children, activeTab, setActiveTab, userProfile }: LayoutProps) {
   const [showNotifications, setShowNotifications] = useState(false);
-
+  const { user } = useAuth();
+  
   const navItems = [
     { id: 'schedule', icon: Calendar, label: 'الجدول' },
-    { id: 'students', icon: Users, label: 'سجل الطلاب' },
+    ...(userProfile?.role === 'teacher' ? [{ id: 'students', icon: Users, label: 'سجل الطلاب' }] : []),
     { id: 'tasks', icon: ClipboardList, label: 'المهام' },
     { id: 'discussions', icon: MessageSquare, label: 'النقاشات' },
+    { id: 'meetings', icon: Video, label: 'المقابلات' },
+    { id: 'settings', icon: Settings, label: 'الإعدادات' },
   ];
+
+  const handleSignOut = () => {
+    signOut(auth);
+  };
 
   return (
     <div className="min-h-screen bg-page-bg text-page-text selection:bg-primary-bg selection:text-primary-base font-sans relative overflow-x-hidden transition-colors duration-300" dir="rtl">
@@ -30,12 +41,25 @@ export function Layout({ children, activeTab, setActiveTab }: LayoutProps) {
       <header className="fixed top-0 w-full z-50 bg-surface-base/80 backdrop-blur-xl border-b border-border-subtle transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img 
-              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop" 
-              alt="المعلم"
-              className="w-10 h-10 rounded-full object-cover border border-border-subtle shrink-0"
-            />
-            <span className="font-bold text-xl text-page-text md:ml-4">EduFlow</span>
+            {user?.photoURL ? (
+              <img 
+                src={user.photoURL}
+                alt={user.displayName || 'المعلم'}
+                className="w-10 h-10 rounded-full object-cover border border-border-subtle shrink-0"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-primary-bg text-primary-base flex items-center justify-center font-bold text-lg shrink-0 border border-primary-base/20">
+                {user?.displayName?.charAt(0) || 'M'}
+              </div>
+            )}
+            <div className="hidden sm:flex flex-col md:ml-4">
+              <span className="font-bold text-xl text-page-text leading-tight">EduFlow</span>
+              {userProfile && (
+                <span className="text-xs text-text-muted font-medium">
+                  {userProfile.role === 'teacher' ? `معلم ${userProfile.subject}` : `طالب (فصل: ${userProfile.classCode})`}
+                </span>
+              )}
+            </div>
           </div>
           
           {/* Desktop Nav */}
@@ -63,48 +87,35 @@ export function Layout({ children, activeTab, setActiveTab }: LayoutProps) {
           
           <div className="flex items-center gap-2 relative">
             <button 
-              onClick={() => setShowNotifications(!showNotifications)}
+              onClick={() => { setShowNotifications(!showNotifications); }}
               className="p-2.5 text-text-light hover:bg-surface-hover hover:text-page-text rounded-2xl transition-colors focus:outline-none relative"
             >
               <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2.5 w-2 h-2 bg-danger-base rounded-full animate-pulse border border-surface-base"></span>
             </button>
 
             {showNotifications && (
               <div className="absolute top-full left-0 mt-2 w-72 md:w-80 bg-surface-base border border-border-subtle rounded-3xl shadow-xl z-50 p-2 animate-in fade-in zoom-in-95 duration-200">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle mb-2">
                   <h3 className="font-bold text-page-text">الإشعارات</h3>
-                  <span className="text-xs bg-primary-bg text-primary-base px-2 py-1 rounded-full font-medium">٢ جديد</span>
+                  <span className="text-xs bg-surface-hover text-text-muted px-2 py-1 rounded-full font-medium">٠ جديد</span>
                 </div>
-                <div className="space-y-1">
-                  <button className="w-fulltext-right flex items-start gap-3 p-3 hover:bg-surface-hover rounded-2xl transition-colors text-right">
-                    <div className="w-8 h-8 rounded-full bg-danger-bg text-danger-base flex items-center justify-center shrink-0 mt-0.5">
-                      <span className="font-bold text-xs">!</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-page-text">انخفاض مستوى الطالب سامر</p>
-                      <p className="text-xs text-text-muted mt-1">يرجى متابعة أدائه في مادة الفيزياء</p>
-                    </div>
-                  </button>
-                  <button className="w-full flex items-start gap-3 p-3 hover:bg-surface-hover rounded-2xl transition-colors text-right">
-                    <div className="w-8 h-8 rounded-full bg-primary-bg text-primary-base flex items-center justify-center shrink-0 mt-0.5">
-                      <Calendar className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-page-text">اجتماع جديد تمت جدولته</p>
-                      <p className="text-xs text-text-muted mt-1">اجتماع الهيئة التدريسية غداً</p>
-                    </div>
-                  </button>
+                <div className="p-6 text-center text-text-muted">
+                  <Bell className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                  <p>لا توجد إشعارات حالياً</p>
                 </div>
-                <button className="w-full mt-2 py-2 text-primary-base text-sm font-medium hover:bg-primary-bg rounded-xl transition-colors">
-                  تحديد الكل كمقروء
-                </button>
               </div>
             )}
             
             <ThemeToggle />
             <button className="p-2.5 text-text-light hover:bg-surface-hover hover:text-page-text rounded-2xl transition-colors focus:outline-none">
               <Search className="w-5 h-5" />
+            </button>
+            <button
+              onClick={handleSignOut}
+              className="p-2.5 text-text-light hover:bg-surface-hover hover:text-page-text rounded-2xl transition-colors focus:outline-none ml-2"
+              title="تسجيل الخروج"
+            >
+              <LogOut className="w-5 h-5" />
             </button>
           </div>
         </div>
